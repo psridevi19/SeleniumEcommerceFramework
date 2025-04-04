@@ -27,6 +27,7 @@ public class Listeners extends BaseTest implements ITestListener {
         threadLocal.get().log(Status.PASS,"Test Passed");
     }
 
+    //Added Screenshot capture when test fails
     public void onTestFailure(ITestResult result) {
         threadLocal.get().fail(result.getThrowable());
         try {
