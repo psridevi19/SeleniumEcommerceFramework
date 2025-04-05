@@ -31,14 +31,12 @@ public class BaseTest {
     public WebDriver driver;
     public LandingPage landingPage;
 
-
     public WebDriver initializeDriver() throws IOException {
         Properties prop = new Properties();
         FileInputStream fis = new FileInputStream(System.getProperty("user.dir")+"/src/main/java/ecom/resources/GlobalData.properties");
         prop.load(fis);
         String browserName = System.getProperty("browser")!=null ? System.getProperty("browser") :prop.getProperty("browser");
 
-       // String browserName = prop.getProperty("browser");
         if (browserName.contains("chrome")) {
             ChromeOptions options = new ChromeOptions();
             if(browserName.contains("headless")){
