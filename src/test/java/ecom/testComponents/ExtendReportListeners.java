@@ -2,23 +2,30 @@ package ecom.testComponents;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import ecom.resources.ExtentReporterNG;
+import io.qameta.allure.Allure;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import ecom.resources.ExtentReporterNG;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class Listeners extends BaseTest implements ITestListener {
+public class ExtendReportListeners extends BaseTest implements ITestListener {
 
     ExtentReports extent = ExtentReporterNG.getReportObject();
     ExtentTest test;
     ThreadLocal<ExtentTest> threadLocal = new ThreadLocal();
     @Override
     public void onTestStart(ITestResult result) {
+        System.out.println("In On test start");
         test = extent.createTest(result.getMethod().getMethodName());
         threadLocal.set(test);
     }
@@ -29,6 +36,8 @@ public class Listeners extends BaseTest implements ITestListener {
 
     //Added Screenshot capture when test fails
     public void onTestFailure(ITestResult result) {
+
+        System.out.println("In On test failure");
         threadLocal.get().fail(result.getThrowable());
         try {
             driver = (WebDriver) result.getTestClass().getRealClass().getField("driver").get(result.getInstance());
@@ -39,10 +48,17 @@ public class Listeners extends BaseTest implements ITestListener {
         String filePath;
         try {
             filePath = getScreenShot(result.getMethod().getMethodName(),driver);
-        } catch (IOException e) {
+        } catch
+        (IOException e) {
             throw new RuntimeException(e);
         }
         test.addScreenCaptureFromPath(filePath,result.getMethod().getMethodName());
+       // test.fail("Test failed... Check Screenshot", MediaEntityBuilder.createScreenCaptureFromPath(filePath).build());
+
+        System.out.println("In On test failure, Adding screenshot for allure");
+//Adding screenshot to allure report.
+        Allure.addAttachment("Adding Invalid Credentials", getScreenshotAsFileInputStream(driver,result.getMethod().getMethodName()));
+
     }
 
     public void onTestSkipped(ITestResult result) {

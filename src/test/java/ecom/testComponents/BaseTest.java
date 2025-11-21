@@ -5,6 +5,7 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ecom.pageObjects.LandingPage;
+import io.qameta.allure.Allure;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -14,6 +15,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -72,6 +74,8 @@ public class BaseTest {
     }
 
     public String getScreenShot(String testCaseName, WebDriver driver) throws IOException {
+
+        System.out.println("Taking screenshot On failure");
        TakesScreenshot ts =  (TakesScreenshot)driver;
        File source = ts.getScreenshotAs(OutputType.FILE);
        File destination = new File(System.getProperty("user.dir")+"/reports/screenshots/"+testCaseName+".png");
@@ -79,6 +83,20 @@ public class BaseTest {
        return System.getProperty("user.dir")+"/reports/screenshots/"+testCaseName+".png";
     }
 
+    public static FileInputStream getScreenshotAsFileInputStream(WebDriver driver,String screenshotName)
+    {
+
+      System.out.println(" Taking screenshot for allure report");
+        File src =((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+
+        try {
+            return new FileInputStream(src);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
 
    @BeforeMethod(alwaysRun=true)
     public LandingPage launchApplication() throws IOException {
@@ -88,8 +106,15 @@ public class BaseTest {
         return landingPage;
     }
     @AfterMethod(alwaysRun=true)
-    public void tearDown()
+    public void tearDown(ITestResult result)
     {
+        if(result.getStatus() == ITestResult.FAILURE)
+        {
+
+            Allure.addAttachment("Adding Invalid Credentials", getScreenshotAsFileInputStream(driver,"LoginInput"));
+
+        }
+
         driver.close();
     }
 

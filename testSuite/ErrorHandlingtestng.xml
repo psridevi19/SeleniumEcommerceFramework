@@ -1,6 +1,9 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite parallel="tests" name = "Testsuite">
 
+<!--    <listeners>-->
+<!--    <listener class-name="ecom.testComponents.ExtendReportListeners"/>-->
+<!--    </listeners>-->
     <groups>
         <run>
             <include name ="ErrorHandling"></include>

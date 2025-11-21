@@ -3,20 +3,23 @@ package ecom.testCases;
 import ecom.pageObjects.CartPage;
 import ecom.pageObjects.ProductsCataloguePage;
 import ecom.testComponents.BaseTest;
+import ecom.testComponents.ExtendReportListeners;
 import ecom.testComponents.Retry;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
+@Listeners({ExtendReportListeners.class})
 public class ErrorValidationTest extends BaseTest {
 
     @Test(groups={"ErrorHandling"},retryAnalyzer=Retry.class)
     public void loginErrorValidation() {
 
         ProductsCataloguePage productsCataloguePage = landingPage.loginApplication("testuser2025@gmail.com", "A123");
-        Assert.assertEquals(landingPage.getErrorMessage(),"Incorrect email or password.");
+        Assert.assertEquals(landingPage.getErrorMessage(),"I-Incorrect email or password.");
     }
 
     @Test
