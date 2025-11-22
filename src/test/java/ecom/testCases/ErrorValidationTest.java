@@ -19,7 +19,7 @@ public class ErrorValidationTest extends BaseTest {
     public void loginErrorValidation() {
 
         ProductsCataloguePage productsCataloguePage = landingPage.loginApplication("testuser2025@gmail.com", "A123");
-        Assert.assertEquals(landingPage.getErrorMessage(),"I-Incorrect email or password.");
+        Assert.assertEquals(landingPage.getErrorMessage(),"Incorrect email or password.");
     }
 
     @Test

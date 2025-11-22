@@ -8,12 +8,13 @@ import java.util.Date;
 
 public class ExtentReporterNG {
 
+    private static ExtentReports extent;
     public static ExtentReports getReportObject()
     {
-         ExtentReports extent;
+
 
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
-        String reportpath = System.getProperty("user.dir")+"reports/ExtentReport_"+timestamp+".html";
+        String reportpath = System.getProperty("user.dir")+"/reports/ExtentReport_"+timestamp+".html";
       //  String path = System.getProperty("user.dir")+"/reports/index.html";
         ExtentSparkReporter reporter = new ExtentSparkReporter(reportpath);
         reporter.config().setReportName("Web Automation Results");

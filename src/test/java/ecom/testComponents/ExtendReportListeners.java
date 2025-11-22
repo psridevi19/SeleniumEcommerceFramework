@@ -20,8 +20,9 @@ import java.io.IOException;
 
 public class ExtendReportListeners extends BaseTest implements ITestListener {
 
-    ExtentReports extent = ExtentReporterNG.getReportObject();
-    ExtentTest test;
+    WebDriver driver;
+    protected static ExtentReports extent = ExtentReporterNG.getReportObject();
+    //protected ExtentTest test;
     ThreadLocal<ExtentTest> threadLocal = new ThreadLocal();
     @Override
     public void onTestStart(ITestResult result) {
@@ -44,7 +45,6 @@ public class ExtendReportListeners extends BaseTest implements ITestListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         String filePath;
         try {
             filePath = getScreenShot(result.getMethod().getMethodName(),driver);
@@ -52,8 +52,10 @@ public class ExtendReportListeners extends BaseTest implements ITestListener {
         (IOException e) {
             throw new RuntimeException(e);
         }
-        test.addScreenCaptureFromPath(filePath,result.getMethod().getMethodName());
-       // test.fail("Test failed... Check Screenshot", MediaEntityBuilder.createScreenCaptureFromPath(filePath).build());
+
+        System.out.println("In On test failure - SCreen shot path : "+filePath);
+     //   test.addScreenCaptureFromPath(filePath,result.getMethod().getMethodName());
+        test.fail("Test failed... Check Screenshot", MediaEntityBuilder.createScreenCaptureFromPath(filePath).build());
 
         System.out.println("In On test failure, Adding screenshot for allure");
 //Adding screenshot to allure report.
@@ -75,6 +77,7 @@ public class ExtendReportListeners extends BaseTest implements ITestListener {
     }
 
     public void onFinish(ITestContext context) {
+        System.out.println("On Test Finish");
         extent.flush();
     }
 }

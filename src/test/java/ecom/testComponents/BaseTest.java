@@ -1,6 +1,8 @@
 package ecom.testComponents;
 
 import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +32,9 @@ import java.util.Properties;
 
 public class BaseTest {
 
-    public WebDriver driver;
+    public static WebDriver driver;
     public LandingPage landingPage;
+    protected ExtentTest test;
 
     public WebDriver initializeDriver() throws IOException {
         Properties prop = new Properties();
@@ -61,6 +64,14 @@ public class BaseTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         return driver;
     }
+
+    @BeforeMethod(alwaysRun=true)
+    public LandingPage launchApplication() throws IOException {
+        driver = initializeDriver();
+        landingPage = new LandingPage(driver);
+        landingPage.goTo("https://rahulshettyacademy.com/client");
+        return landingPage;
+    }
     public List<HashMap<String, String>> getJsonDataToMap(String filePath) throws IOException {
         //read json to String
         String jsonContent = FileUtils.readFileToString(new File(filePath));
@@ -78,9 +89,11 @@ public class BaseTest {
         System.out.println("Taking screenshot On failure");
        TakesScreenshot ts =  (TakesScreenshot)driver;
        File source = ts.getScreenshotAs(OutputType.FILE);
-       File destination = new File(System.getProperty("user.dir")+"/reports/screenshots/"+testCaseName+".png");
-       FileUtils.copyFile(source,destination);
-       return System.getProperty("user.dir")+"/reports/screenshots/"+testCaseName+".png";
+       String path = System.getProperty("user.dir")+"/reports/screenshots/"+testCaseName+".png";
+      System.out.println("SCreen shot path : "+path);
+       //File destination = new File(path);
+       FileUtils.copyFile(source,new File(path));
+       return path;
     }
 
     public static FileInputStream getScreenshotAsFileInputStream(WebDriver driver,String screenshotName)
@@ -98,18 +111,13 @@ public class BaseTest {
         }
     }
 
-   @BeforeMethod(alwaysRun=true)
-    public LandingPage launchApplication() throws IOException {
-        driver = initializeDriver();
-        landingPage = new LandingPage(driver);
-        landingPage.goTo("https://rahulshettyacademy.com/client");
-        return landingPage;
-    }
+
     @AfterMethod(alwaysRun=true)
     public void tearDown(ITestResult result)
     {
         if(result.getStatus() == ITestResult.FAILURE)
         {
+
 
             Allure.addAttachment("Adding Invalid Credentials", getScreenshotAsFileInputStream(driver,"LoginInput"));
 
